@@ -38,7 +38,11 @@ class ApiFilePresignedUrlResponseNormalizer implements DenormalizerInterface, No
             return $object;
         }
         if (\array_key_exists('expires_at', $data)) {
-            $object->setExpiresAt(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['expires_at']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['expires_at']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['expires_at'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setExpiresAt($date);
             unset($data['expires_at']);
         }
         if (\array_key_exists('object_key', $data)) {

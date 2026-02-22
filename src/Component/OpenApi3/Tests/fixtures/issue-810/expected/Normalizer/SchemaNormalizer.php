@@ -45,7 +45,11 @@ class SchemaNormalizer implements DenormalizerInterface, NormalizerInterface, De
             unset($data['stringProperty']);
         }
         if (\array_key_exists('dateProperty', $data)) {
-            $object->setDateProperty(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['dateProperty']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['dateProperty']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['dateProperty'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setDateProperty($date);
             unset($data['dateProperty']);
         }
         if (\array_key_exists('integerProperty', $data)) {

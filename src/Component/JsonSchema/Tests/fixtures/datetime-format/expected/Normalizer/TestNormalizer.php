@@ -38,12 +38,20 @@ class TestNormalizer implements DenormalizerInterface, NormalizerInterface, Deno
             return $object;
         }
         if (\array_key_exists('date', $data)) {
-            $object->setDate(\DateTime::createFromFormat('l, d-M-y H:i:s T', $data['date']));
+            $date = \DateTime::createFromFormat('l, d-M-y H:i:s T', $data['date']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['date'], 'l, d-M-y H:i:s T'));
+            }
+            $object->setDate($date);
         }
         if (\array_key_exists('dateOrNull', $data) && $data['dateOrNull'] !== null) {
             $value = $data['dateOrNull'];
             if (is_string($data['dateOrNull']) and false !== \DateTime::createFromFormat('l, d-M-y H:i:s T', $data['dateOrNull'])) {
-                $value = \DateTime::createFromFormat('l, d-M-y H:i:s T', $data['dateOrNull']);
+                $date_1 = \DateTime::createFromFormat('l, d-M-y H:i:s T', $data['dateOrNull']);
+                if (false === $date_1) {
+                    throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['dateOrNull'], 'l, d-M-y H:i:s T'));
+                }
+                $value = $date_1;
             } elseif (is_null($data['dateOrNull'])) {
                 $value = $data['dateOrNull'];
             }
@@ -55,7 +63,11 @@ class TestNormalizer implements DenormalizerInterface, NormalizerInterface, Deno
         if (\array_key_exists('dateOrNullOrInt', $data) && $data['dateOrNullOrInt'] !== null) {
             $value_1 = $data['dateOrNullOrInt'];
             if (is_string($data['dateOrNullOrInt']) and false !== \DateTime::createFromFormat('l, d-M-y H:i:s T', $data['dateOrNullOrInt'])) {
-                $value_1 = \DateTime::createFromFormat('l, d-M-y H:i:s T', $data['dateOrNullOrInt']);
+                $date_2 = \DateTime::createFromFormat('l, d-M-y H:i:s T', $data['dateOrNullOrInt']);
+                if (false === $date_2) {
+                    throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['dateOrNullOrInt'], 'l, d-M-y H:i:s T'));
+                }
+                $value_1 = $date_2;
             } elseif (is_null($data['dateOrNullOrInt'])) {
                 $value_1 = $data['dateOrNullOrInt'];
             } elseif (is_int($data['dateOrNullOrInt'])) {

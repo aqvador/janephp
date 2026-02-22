@@ -1,0 +1,60 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "DateTime Custom Format Test",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/test": {
+            "get": {
+                "operationId": "getTest",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DateTimeModel"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "DateTimeModel": {
+                "type": "object",
+                "properties": {
+                    "defaultDateTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Uses default RFC3339 format"
+                    },
+                    "customDateTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "x-date-format": "Y-m-d H:i:s",
+                        "description": "Uses custom Y-m-d H:i:s format"
+                    },
+                    "customDate": {
+                        "type": "string",
+                        "format": "date",
+                        "x-date-format": "d/m/Y",
+                        "description": "Uses custom d/m/Y format"
+                    },
+                    "nullableCustomDateTime": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "date-time",
+                        "x-date-format": "Y-m-d H:i:s",
+                        "description": "Nullable property with custom format"
+                    }
+                },
+                "required": ["defaultDateTime"]
+            }
+        }
+    }
+}

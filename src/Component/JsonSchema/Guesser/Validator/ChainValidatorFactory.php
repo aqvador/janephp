@@ -35,6 +35,7 @@ class ChainValidatorFactory
         $chainValidator->addValidator(new Format\IPv4Validator());
         $chainValidator->addValidator(new Format\IPv6Validator());
         $chainValidator->addValidator(new Format\UuidValidator());
+        $chainValidator->addValidator(new Format\DateTimeValidator());
         // Others
         $chainValidator->addValidator(new Any\TypeValidator());
         $chainValidator->addValidator(new Any\EnumValidator());

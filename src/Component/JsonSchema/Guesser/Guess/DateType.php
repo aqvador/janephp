@@ -7,6 +7,7 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar;
+use PhpParser\Node\Stmt;
 
 /**
  * Represent a Date type.
@@ -33,9 +34,44 @@ class DateType extends ObjectType
         $this->preferInterface = $preferInterface ?? false;
     }
 
+    public function createDenormalizationStatement(Context $context, Expr $input, bool $normalizerFromObject = true): array
+    {
+        $tempVar = new Expr\Variable($context->getUniqueVariableName('date'));
+        $parseExpr = new Expr\StaticCall(new Name('\DateTime'), 'createFromFormat', [
+            new Arg(new Scalar\String_($this->format)),
+            new Arg($input),
+        ]);
+
+        $statements = [
+            new Stmt\Expression(new Expr\Assign($tempVar, $parseExpr)),
+            new Stmt\If_(
+                new Expr\BinaryOp\Identical(new Expr\ConstFetch(new Name('false')), $tempVar),
+                [
+                    'stmts' => [
+                        new Stmt\Expression(new Expr\Throw_(new Expr\New_(
+                            new Name('\InvalidArgumentException'),
+                            [new Arg(new Expr\FuncCall(new Name('sprintf'), [
+                                new Arg(new Scalar\String_('Invalid date value "%s", expected format "%s".')),
+                                new Arg($input),
+                                new Arg(new Scalar\String_($this->format)),
+                            ]))]
+                        ))),
+                    ],
+                ]
+            ),
+        ];
+
+        $resultExpr = new Expr\MethodCall($tempVar, 'setTime', [
+            new Arg(new Scalar\LNumber(0)),
+            new Arg(new Scalar\LNumber(0)),
+            new Arg(new Scalar\LNumber(0)),
+        ]);
+
+        return [$statements, $resultExpr];
+    }
+
     protected function createDenormalizationValueStatement(Context $context, Expr $input, bool $normalizerFromObject = true): Expr
     {
-        // \DateTime::createFromFormat($format, $data)->setTime(0, 0, 0)
         return new Expr\MethodCall(
             new Expr\StaticCall(
                 new Name('\DateTime'),

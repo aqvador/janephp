@@ -38,7 +38,11 @@ class UserAuditHistoryNormalizer implements DenormalizerInterface, NormalizerInt
             return $object;
         }
         if (\array_key_exists('modificationDate', $data)) {
-            $object->setModificationDate(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['modificationDate']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['modificationDate']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['modificationDate'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setModificationDate($date);
         }
         if (\array_key_exists('modifiedByUser', $data) && $data['modifiedByUser'] !== null) {
             $object->setModifiedByUser($data['modifiedByUser']);

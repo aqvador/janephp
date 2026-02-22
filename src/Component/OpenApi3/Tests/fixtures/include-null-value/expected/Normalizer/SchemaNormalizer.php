@@ -67,11 +67,19 @@ class SchemaNormalizer implements DenormalizerInterface, NormalizerInterface, De
             unset($data['stringProperty']);
         }
         if (\array_key_exists('dateProperty', $data)) {
-            $object->setDateProperty(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['dateProperty']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['dateProperty']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['dateProperty'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setDateProperty($date);
             unset($data['dateProperty']);
         }
         if (\array_key_exists('dateNullableProperty', $data) && $data['dateNullableProperty'] !== null) {
-            $object->setDateNullableProperty(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['dateNullableProperty']));
+            $date_1 = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['dateNullableProperty']);
+            if (false === $date_1) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['dateNullableProperty'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setDateNullableProperty($date_1);
             unset($data['dateNullableProperty']);
         }
         elseif (\array_key_exists('dateNullableProperty', $data) && $data['dateNullableProperty'] === null) {

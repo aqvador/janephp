@@ -53,7 +53,11 @@ class SimpleCommitNormalizer implements DenormalizerInterface, NormalizerInterfa
             unset($data['message']);
         }
         if (\array_key_exists('timestamp', $data)) {
-            $object->setTimestamp(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['timestamp']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['timestamp']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['timestamp'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setTimestamp($date);
             unset($data['timestamp']);
         }
         if (\array_key_exists('author', $data) && $data['author'] !== null) {

@@ -79,11 +79,19 @@ class EventNormalizer implements DenormalizerInterface, NormalizerInterface, Den
             unset($data['oldValue']);
         }
         if (\array_key_exists('eventDate', $data)) {
-            $object->setEventDate(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['eventDate']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['eventDate']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['eventDate'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setEventDate($date);
             unset($data['eventDate']);
         }
         if (\array_key_exists('createdDate', $data)) {
-            $object->setCreatedDate(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['createdDate']));
+            $date_1 = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['createdDate']);
+            if (false === $date_1) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['createdDate'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setCreatedDate($date_1);
             unset($data['createdDate']);
         }
         foreach ($data as $key => $value) {

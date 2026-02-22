@@ -41,7 +41,11 @@ class StargazerNormalizer implements DenormalizerInterface, NormalizerInterface,
             return $object;
         }
         if (\array_key_exists('starred_at', $data)) {
-            $object->setStarredAt(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['starred_at']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['starred_at']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['starred_at'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setStarredAt($date);
             unset($data['starred_at']);
         }
         if (\array_key_exists('user', $data) && $data['user'] !== null) {

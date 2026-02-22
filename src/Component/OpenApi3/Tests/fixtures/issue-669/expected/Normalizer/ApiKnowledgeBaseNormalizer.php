@@ -41,11 +41,19 @@ class ApiKnowledgeBaseNormalizer implements DenormalizerInterface, NormalizerInt
             return $object;
         }
         if (\array_key_exists('added_to_agent_at', $data)) {
-            $object->setAddedToAgentAt(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['added_to_agent_at']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['added_to_agent_at']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['added_to_agent_at'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setAddedToAgentAt($date);
             unset($data['added_to_agent_at']);
         }
         if (\array_key_exists('created_at', $data)) {
-            $object->setCreatedAt(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['created_at']));
+            $date_1 = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['created_at']);
+            if (false === $date_1) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['created_at'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setCreatedAt($date_1);
             unset($data['created_at']);
         }
         if (\array_key_exists('database_id', $data)) {
@@ -85,7 +93,11 @@ class ApiKnowledgeBaseNormalizer implements DenormalizerInterface, NormalizerInt
             unset($data['tags']);
         }
         if (\array_key_exists('updated_at', $data)) {
-            $object->setUpdatedAt(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['updated_at']));
+            $date_2 = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['updated_at']);
+            if (false === $date_2) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['updated_at'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setUpdatedAt($date_2);
             unset($data['updated_at']);
         }
         if (\array_key_exists('user_id', $data)) {

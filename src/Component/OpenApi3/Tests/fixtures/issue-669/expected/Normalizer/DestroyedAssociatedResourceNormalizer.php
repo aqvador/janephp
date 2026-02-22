@@ -46,7 +46,11 @@ class DestroyedAssociatedResourceNormalizer implements DenormalizerInterface, No
             unset($data['name']);
         }
         if (\array_key_exists('destroyed_at', $data)) {
-            $object->setDestroyedAt(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['destroyed_at']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['destroyed_at']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['destroyed_at'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setDestroyedAt($date);
             unset($data['destroyed_at']);
         }
         if (\array_key_exists('error_message', $data)) {

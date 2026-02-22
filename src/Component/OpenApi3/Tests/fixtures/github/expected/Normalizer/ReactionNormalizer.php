@@ -60,7 +60,11 @@ class ReactionNormalizer implements DenormalizerInterface, NormalizerInterface, 
             unset($data['content']);
         }
         if (\array_key_exists('created_at', $data)) {
-            $object->setCreatedAt(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['created_at']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['created_at']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['created_at'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setCreatedAt($date);
             unset($data['created_at']);
         }
         foreach ($data as $key => $value) {

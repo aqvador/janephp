@@ -41,7 +41,11 @@ class HealthcheckResultNormalizer implements DenormalizerInterface, NormalizerIn
             return $object;
         }
         if (\array_key_exists('Start', $data)) {
-            $object->setStart(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['Start']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['Start']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['Start'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setStart($date);
         }
         if (\array_key_exists('End', $data)) {
             $object->setEnd($data['End']);

@@ -30,7 +30,16 @@ class DateGuesser implements GuesserInterface, TypeGuesserInterface
 
     public function guessType($object, string $name, string $reference, Registry $registry): Type
     {
-        return new DateType($object, $this->dateFormat, $this->preferInterface);
+        $format = $this->dateFormat;
+
+        if ($object instanceof \ArrayObject && $object->offsetExists('x-date-format')) {
+            $perPropertyFormat = $object->offsetGet('x-date-format');
+            if (\is_string($perPropertyFormat) && '' !== $perPropertyFormat) {
+                $format = $perPropertyFormat;
+            }
+        }
+
+        return new DateType($object, $format, $this->preferInterface);
     }
 
     protected function getSchemaClass(): string

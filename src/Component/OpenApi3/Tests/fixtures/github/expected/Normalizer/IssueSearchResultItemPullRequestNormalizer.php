@@ -41,7 +41,11 @@ class IssueSearchResultItemPullRequestNormalizer implements DenormalizerInterfac
             return $object;
         }
         if (\array_key_exists('merged_at', $data) && $data['merged_at'] !== null) {
-            $object->setMergedAt(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['merged_at']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['merged_at']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['merged_at'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setMergedAt($date);
             unset($data['merged_at']);
         }
         elseif (\array_key_exists('merged_at', $data) && $data['merged_at'] === null) {

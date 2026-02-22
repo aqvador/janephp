@@ -38,10 +38,18 @@ class UserAuditDetailNormalizer implements DenormalizerInterface, NormalizerInte
             return $object;
         }
         if (\array_key_exists('creationDate', $data)) {
-            $object->setCreationDate(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['creationDate']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['creationDate']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['creationDate'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setCreationDate($date);
         }
         if (\array_key_exists('modificationDate', $data)) {
-            $object->setModificationDate(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['modificationDate']));
+            $date_1 = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['modificationDate']);
+            if (false === $date_1) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['modificationDate'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setModificationDate($date_1);
         }
         if (\array_key_exists('createdByUser', $data) && $data['createdByUser'] !== null) {
             $object->setCreatedByUser($data['createdByUser']);

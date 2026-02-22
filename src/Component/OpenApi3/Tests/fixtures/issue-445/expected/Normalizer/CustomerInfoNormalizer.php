@@ -93,7 +93,11 @@ class CustomerInfoNormalizer implements DenormalizerInterface, NormalizerInterfa
             $object->setApps(null);
         }
         if (\array_key_exists('modificationDate', $data)) {
-            $object->setModificationDate(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['modificationDate']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['modificationDate']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['modificationDate'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setModificationDate($date);
         }
         if (\array_key_exists('baseUrl', $data)) {
             $object->setBaseUrl($data['baseUrl']);

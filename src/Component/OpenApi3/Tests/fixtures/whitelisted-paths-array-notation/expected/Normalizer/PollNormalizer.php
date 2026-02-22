@@ -54,7 +54,11 @@ class PollNormalizer implements DenormalizerInterface, NormalizerInterface, Deno
             unset($data['voting_status']);
         }
         if (\array_key_exists('end_datetime', $data)) {
-            $object->setEndDatetime(\DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['end_datetime']));
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:sP', $data['end_datetime']);
+            if (false === $date) {
+                throw new \InvalidArgumentException(sprintf('Invalid datetime value "%s", expected format "%s".', $data['end_datetime'], 'Y-m-d\TH:i:sP'));
+            }
+            $object->setEndDatetime($date);
             unset($data['end_datetime']);
         }
         if (\array_key_exists('duration_minutes', $data)) {
